@@ -158,7 +158,9 @@ function initScene() {
     engine.scene.background = new THREE.Color('#101525');
     engine.scene.fog = new THREE.FogExp2('#101525', 0.055);
     engine.camera.position.set(0, 0.1, 7.7);
-    const targetX = window.innerWidth <= 640 ? -0.62 : -1.18;\n    engine.camera.lookAt(targetX, 0, 0);\n    window.addEventListener('resize', () => engine.camera.lookAt(window.innerWidth <= 640 ? -0.62 : -1.18, 0, 0), { passive: true });
+    const targetX = window.innerWidth <= 640 ? -0.62 : -1.18;
+    engine.camera.lookAt(targetX, 0, 0);
+    window.addEventListener('resize', () => engine.camera.lookAt(window.innerWidth <= 640 ? -0.62 : -1.18, 0, 0), { passive: true });
 
     const ambient = new THREE.HemisphereLight('#c4d2ff', '#18251f', 1.6);
     engine.scene.add(ambient);
