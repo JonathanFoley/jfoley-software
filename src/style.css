@@ -174,3 +174,53 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--green); outline
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* v2: restrained ambient movement gives the page a little life without
+   competing with the copy or turning the studio site into a motion demo. */
+@keyframes orbit-drift {
+  from { transform: rotate(-22deg) scale(1); }
+  to { transform: rotate(338deg) scale(1.025); }
+}
+@keyframes orbit-drift-reverse {
+  from { transform: rotate(29deg); }
+  to { transform: rotate(-331deg); }
+}
+@keyframes glow-breathe {
+  0%, 100% { opacity: .62; transform: scale(.94); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes cross-pulse {
+  0%, 100% { opacity: .35; }
+  50% { opacity: .9; }
+}
+@keyframes label-drift {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -5px; }
+}
+.art-orbit.orbit-one { animation: orbit-drift 70s linear infinite; }
+.art-orbit.orbit-two { animation: orbit-drift-reverse 88s linear infinite; }
+.art-glow { animation: glow-breathe 9s ease-in-out infinite; }
+.art-cross { animation: cross-pulse 5.5s ease-in-out infinite; }
+.cross-b { animation-delay: 2.4s; }
+.art-label-top { animation: label-drift 8s ease-in-out infinite; }
+.art-label-bottom { animation: label-drift 9s ease-in-out infinite reverse; }
+.service-row { transition: padding-left .35s ease, border-color .35s ease; }
+.service-row:hover { padding-left: 12px; border-color: rgba(21,26,40,.42); }
+.service-symbol { transition: transform .35s ease, color .35s ease; }
+.service-row:hover .service-symbol { transform: translate(4px,-4px); color: #7a5ba7; }
+.approach-card { transition: transform .45s cubic-bezier(.2,.7,.2,1), background .35s ease; }
+.approach-card:hover { transform: translateY(-7px); }
+.card-line { transform-origin: left; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+.approach-card:hover .card-line { transform: scaleX(1); }
+.work-visual { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
+.work-card:hover .work-visual { transform: translateY(-5px); }
+.mock-sun { animation: glow-breathe 11s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .art-orbit, .art-glow, .art-cross, .art-label-top, .art-label-bottom, .mock-sun {
+    animation: none !important;
+  }
+  .service-row, .service-symbol, .approach-card, .card-line, .work-visual {
+    transition: none !important;
+  }
+}

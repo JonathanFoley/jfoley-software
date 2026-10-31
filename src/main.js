@@ -99,47 +99,81 @@ function buildThistle() {
   headCore.scale.set(1, 0.91, 0.98);
   head.add(headCore);
 
-  // Layered, individually modelled florets create the thistle's characteristic crown.
-  for (let i = 0; i < 132; i++) {
-    const t = (i + 0.5) / 132;
+  // Dense, individually curved florets: fine tapered forms read much closer to
+  // the thread-like purple flowers of a real Scottish thistle than blunt cones.
+  const petalPalette = ['#7651ad', '#8963bd', '#a17bcf', '#b99bdc', '#d0b9e8'];
+  const petalMats = petalPalette.map(color => new THREE.MeshStandardMaterial({
+    color, roughness: 0.72, metalness: 0, side: THREE.DoubleSide
+  }));
+  const up = new THREE.Vector3(0, 1, 0);
+  function makeFloret(direction, index) {
+    const base = direction.clone().multiplyScalar(0.34);
+    const length = 0.28 + (index % 7) * 0.018;
+    const outward = direction.clone().multiplyScalar(0.12 + (index % 3) * 0.018);
+    const curl = new THREE.Vector3(Math.sin(index * 2.1), 0.15 + Math.cos(index) * 0.12, Math.cos(index * 1.7)).multiplyScalar(0.045);
+    const curve = new THREE.CatmullRomCurve3([
+      base,
+      base.clone().add(direction.clone().multiplyScalar(0.12)).add(outward),
+      base.clone().add(direction.clone().multiplyScalar(length * 0.78)).add(curl),
+      base.clone().add(direction.clone().multiplyScalar(length)).add(curl).add(new THREE.Vector3(0, 0.035, 0))
+    ]);
+    const points = curve.getPoints(7);
+    const vertices = [], indices = [];
+    const sides = 5;
+    for (let j = 0; j < points.length; j++) {
+      const tangent = curve.getTangent(j / (points.length - 1)).normalize();
+      const axisA = new THREE.Vector3().crossVectors(tangent, Math.abs(tangent.y) < 0.9 ? up : new THREE.Vector3(1,0,0)).normalize();
+      const axisB = new THREE.Vector3().crossVectors(tangent, axisA).normalize();
+      const taper = [0.62, 0.54, 0.42, 0.29, 0.19, 0.12, 0.065, 0.012][j] || 0.012;
+      for (let k = 0; k < sides; k++) {
+        const a = (k / sides) * Math.PI * 2;
+        const v = points[j].clone().addScaledVector(axisA, Math.cos(a) * 0.022 * taper).addScaledVector(axisB, Math.sin(a) * 0.022 * taper);
+        vertices.push(v.x, v.y, v.z);
+        if (j < points.length - 1) {
+          const n = j * sides + k, next = j * sides + (k + 1) % sides;
+          indices.push(n, next, n + sides, next, next + sides, n + sides);
+        }
+      }
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    const floret = new THREE.Mesh(geometry, petalMats[index % petalMats.length]);
+    floret.castShadow = true;
+    return floret;
+  }
+  const floretCount = 210;
+  for (let i = 0; i < floretCount; i++) {
+    const t = (i + 0.5) / floretCount;
     const y = 1 - 2 * t;
     const radius = Math.sqrt(Math.max(0, 1 - y * y));
     const theta = i * 2.399963229728653;
     const direction = new THREE.Vector3(Math.cos(theta) * radius, y, Math.sin(theta) * radius).normalize();
-    const petalLength = 0.23 + 0.12 * (1 - Math.abs(y));
-    const petal = new THREE.Mesh(
-      new THREE.ConeGeometry(0.026 + (1 - Math.abs(y)) * 0.009, petalLength, 5),
-      i % 4 === 0 ? petalLightMat : petalMat
-    );
-    petal.position.copy(direction.clone().multiplyScalar(0.37));
-    petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
-    petal.rotateY((i % 3) * 0.14);
-    petal.castShadow = true;
-    head.add(petal);
+    head.add(makeFloret(direction, i));
   }
 
-  // Pointed green bracts around the base of the flower.
-  for (let i = 0; i < 28; i++) {
-    const angle = (i / 28) * Math.PI * 2;
-    const bract = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.35, 5), bractMat);
-    bract.position.set(Math.cos(angle) * 0.35, -0.28, Math.sin(angle) * 0.35);
-    bract.rotation.z = Math.cos(angle) * 0.62;
-    bract.rotation.x = Math.sin(angle) * 0.62;
-    bract.rotation.y = -angle;
-    bract.castShadow = true;
-    head.add(bract);
+  // Overlapping, narrow lance-shaped involucral bracts with fine central ribs.
+  const bractLevels = 3;
+  for (let level = 0; level < bractLevels; level++) {
+    const count = 24 + level * 4;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + level * 0.12;
+      const bract = makeLeaf(level % 2 ? leafLightMat : bractMat, 0.42 - level * 0.035, 0.075 - level * 0.008);
+      bract.position.set(Math.cos(angle) * (0.29 + level * 0.025), -0.22 - level * 0.045, Math.sin(angle) * (0.29 + level * 0.025));
+      bract.rotation.set(Math.sin(angle) * 0.55, -angle, Math.cos(angle) * -0.58);
+      head.add(bract);
+    }
   }
-  const centre = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 12), coreMat);
-  centre.position.y = 0.05;
+  const centre = new THREE.Mesh(new THREE.SphereGeometry(0.105, 24, 18), coreMat);
+  centre.position.y = 0.015;
   head.add(centre);
-
-  // Tiny seed-like details catch the key light without relying on an external model.
-  const seedMat = new THREE.MeshStandardMaterial({ color: '#e4c18b', roughness: 0.55 });
-  for (let i = 0; i < 24; i++) {
-    const a = i * 2.39996;
-    const r = 0.08 + (i % 5) * 0.012;
-    const seed = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 5), seedMat);
-    seed.position.set(Math.cos(a) * r, 0.07 + (i % 4) * 0.018, Math.sin(a) * r);
+  // Fine pale pollen points add botanical detail without a synthetic glitter effect.
+  const seedMat = new THREE.MeshStandardMaterial({ color: '#d9bd86', roughness: 0.82 });
+  for (let i = 0; i < 38; i++) {
+    const a = i * 2.39996, r = 0.055 + (i % 6) * 0.009;
+    const seed = new THREE.Mesh(new THREE.SphereGeometry(0.008, 6, 5), seedMat);
+    seed.position.set(Math.cos(a) * r, 0.025 + (i % 4) * 0.012, Math.sin(a) * r);
     head.add(seed);
   }
   return { root, head };
