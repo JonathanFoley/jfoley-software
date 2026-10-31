@@ -224,3 +224,57 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--green); outline
     transition: none !important;
   }
 }
+
+
+/* v3: use a real botanical photograph for the hero thistle. The image is
+   intentionally treated as the focal artwork; the orbit graphics remain
+   separate so their slow movement never distorts the plant itself. */
+.photo-thistle #thistle-canvas { display: none; }
+.photo-thistle .hero-art { isolation: isolate; }
+.photo-thistle .thistle-photo {
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: contain;
+  object-position: center;
+  filter: saturate(.82) contrast(1.08) brightness(.84);
+  mix-blend-mode: screen;
+  opacity: .94;
+  -webkit-mask-image: radial-gradient(ellipse 57% 66% at 52% 48%, #000 48%, rgba(0,0,0,.92) 66%, transparent 100%);
+  mask-image: radial-gradient(ellipse 57% 66% at 52% 48%, #000 48%, rgba(0,0,0,.92) 66%, transparent 100%);
+  animation: thistle-photo-float 12s ease-in-out infinite;
+}
+.photo-thistle .art-orbit,
+.photo-thistle .art-label,
+.photo-thistle .art-cross,
+.photo-thistle .art-glow { z-index: 1; }
+.photo-credit {
+  position: absolute;
+  z-index: 2;
+  right: 4%;
+  bottom: 5%;
+  color: rgba(222,225,235,.5);
+  font: 7px/1.4 var(--mono);
+  letter-spacing: .1em;
+  transition: color .25s ease;
+}
+.photo-credit:hover { color: var(--green); }
+@keyframes thistle-photo-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -7px, 0) scale(1.012); }
+}
+@media (max-width: 640px) {
+  .photo-thistle .thistle-photo {
+    width: 115%;
+    height: 108%;
+    left: -8%;
+    top: -2%;
+    opacity: .76;
+  }
+  .photo-credit { right: 23%; bottom: 2%; font-size: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo-thistle .thistle-photo { animation: none !important; }
+}

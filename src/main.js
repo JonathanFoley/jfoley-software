@@ -180,6 +180,10 @@ function buildThistle() {
 }
 
 function initScene() {
+  // The hero now uses a real botanical photograph rather than a procedural flower mesh.
+  // Keep the shared Dioramas engine untouched for other scenes and future use.
+  document.documentElement.classList.add('photo-thistle');
+  return;
   if (!window.WebGLRenderingContext) {
     document.documentElement.classList.add('no-webgl');
     return;
