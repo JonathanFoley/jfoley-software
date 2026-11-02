@@ -1,8 +1,8 @@
-# JFoley Software
+# JFoley Web Design
 
 **Braw websites for wee businesses.**
 
-A Scottish-inspired one-page website for an independent web studio. The design pairs a deep navy base with thistle green and heather purple, and uses a procedural 3D thistle as the centrepiece of a scroll-led story.
+A one-person independent web design and development studio based in Scotland. The site pairs a deep-neon palette with a custom procedural Three.js thistle and a clear, responsive service story.
 
 ## Run locally
 
@@ -17,19 +17,24 @@ Open the local URL printed by Vite. Create a production build with `npm run buil
 
 ## What's included
 
-- Procedural Three.js thistle with individually modelled petals, bracts, stem and leaves — no downloaded 3D model required.
-- Dioramas `Engine` render loop and GSAP/Lenis smooth-scroll helpers.
-- Scroll-led hero, services, approach, selected-work and contact sections.
-- Responsive mobile navigation, keyboard focus states, reduced-motion support and a CSS fallback if WebGL is unavailable.
-- Responsive styling and SEO/social metadata.
+- Custom procedural Three.js thistle with ten bract rings, 1,520 instanced florets, lobed leaves and animated pollen.
+- Shared Dioramas engine and pointer helpers, with an animation loop that pauses when the hero is off-screen or the tab is hidden.
+- Responsive services, approach, selected work, About and contact sections.
+- Native expandable service details, mobile navigation and mailto contact form fallback.
+- Reduced-motion and no-WebGL fallbacks, keyboard focus styles and SEO/social metadata.
 
 ## Framework credit and licence
 
-The rendering, scroll and pointer foundations in `src/dioramas/core/` are adapted from [Dioramas](https://github.com/blendi-remade/dioramas), © 2026 Blendi, under the MIT License. The original licence is included at [src/dioramas/LICENSE](src/dioramas/LICENSE). The JFoley Software site content, layout, procedural thistle and styling are original to this project.
+The rendering, scroll and pointer foundations in `src/dioramas/core/` are adapted from [Dioramas](https://github.com/blendi-remade/dioramas), © 2026 Blendi, under the MIT License. The original licence is included at [src/dioramas/LICENSE](src/dioramas/LICENSE). The JFoley Web Design content, layout, procedural thistle and styling are original to this project.
+
+## Deployment
+
+The Vite build uses a root path (`/`) for the intended custom domain, `jonathanfoley.co.uk`. GitHub Pages custom-domain settings and the live domain cutover must be checked and coordinated separately before launch. This repository's workflow deploys the default branch; feature branches are build-only and must not be treated as production deployments.
 
 ## Before launch
 
-- Confirm the contact email used in `index.html` and `src/main.js` is the address you want published.
-- Replace the two clearly labelled concept projects with real client work or remove them.
-- Add a favicon and final social links if you want them.
-- Run `npm run build` locally before deploying.
+- Confirm the About-section wording and service inclusion lists.
+- Confirm the proposed one-working-day response statement before publishing it.
+- Confirm the budget options before treating them as published pricing guidance.
+- Replace the concept projects with real client work or remove them when suitable work is available.
+- The contact form currently opens the visitor's configured email application; no hosted form provider is connected.
