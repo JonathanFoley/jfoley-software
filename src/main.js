@@ -1,6 +1,7 @@
 import { createNeonThistle } from './dioramas/neon-thistle.js';
 import { smoothScroll, gsap, ScrollTrigger } from './dioramas/core/scroll.js';
 import './style.css';
+import './mobile-hero.css';
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.querySelector('#year').textContent = new Date().getFullYear();
