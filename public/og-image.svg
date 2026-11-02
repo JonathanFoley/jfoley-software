@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow"><stop stop-color="#b45cff" stop-opacity=".42"/><stop offset="1" stop-color="#070a14" stop-opacity="0"/></radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="34"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="#070a14"/>
+  <circle cx="890" cy="305" r="330" fill="url(#glow)" filter="url(#blur)"/>
+  <g transform="translate(895 320)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 270C-10 180 8 85 0-28" stroke="#5af2a0" stroke-width="13" opacity=".8"/>
+    <path d="M0 190C-100 150-190 105-220 20c96 13 169 70 220 145M0 220C108 157 182 91 208 2c-98 28-163 94-208 174" stroke="#5af2a0" stroke-width="10" opacity=".8"/>
+    <path d="M0-22C-122-64-157-153-118-226c73 18 110 65 118 139 23-80 76-126 155-143 35 84-8 177-155 208Z" fill="#5a1ad0" fill-opacity=".28" stroke="#b45cff" stroke-width="10"/>
+    <path d="M-104-172 0-39 106-173M-1 270l-55-67m55 67 54-67" stroke="#8dffc2" stroke-width="8"/>
+  </g>
+  <g fill="#d49aff" opacity=".9"><circle cx="895" cy="90" r="5"/><circle cx="1060" cy="160" r="4"/><circle cx="760" cy="230" r="4"/><circle cx="1085" cy="390" r="5"/><circle cx="785" cy="455" r="3"/><circle cx="1010" cy="510" r="4"/></g>
+  <g font-family="Arial,Helvetica,sans-serif" fill="#f5f6ff">
+    <text x="92" y="175" font-size="20" letter-spacing="6" fill="#5af2a0">INDEPENDENT WEB STUDIO · SCOTLAND, UK</text>
+    <text x="86" y="300" font-size="76" font-weight="700" letter-spacing="-4">Braw websites</text>
+    <text x="86" y="390" font-size="76" font-weight="700" letter-spacing="-4">for wee businesses<tspan fill="#b45cff">.</tspan></text>
+    <text x="92" y="470" font-size="24" fill="#98a3c7">Thoughtful design. Proper development. No daft surprises.</text>
+    <text x="92" y="565" font-size="17" letter-spacing="5" fill="#8dffc2">JFOLEY WEB DESIGN</text>
+  </g>
+</svg>
