@@ -1,4 +1,1 @@
-/* Keep the upper flower head clear of the fixed-height mobile navigation. */
-@media (max-width: 820px) {
-  #thistle-canvas { transform: translateY(36px); }
-}
+/* Mobile hero layout is defined in the complete handover stylesheet. */
