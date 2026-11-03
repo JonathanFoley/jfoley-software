@@ -10,8 +10,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:Manrope,system-ui
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(var(--bg-rgb),.92) 0%,rgba(var(--bg-rgb),.55) 38%,transparent 62%)}
 nav{position:absolute;top:calc(env(safe-area-inset-top,0px) + 22px);left:clamp(20px,6vw,88px);right:clamp(20px,6vw,88px);display:flex;justify-content:space-between;align-items:center;z-index:2}
 .wm{display:flex;gap:12px;align-items:center;color:var(--fg);text-decoration:none;font:500 12px/1 "DM Mono",monospace;letter-spacing:.14em}
-.wm .m{font:800 15px Manrope;letter-spacing:0;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-.wm .m i{color:var(--green);font-style:normal}
+.wm .m{display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;border:1px solid var(--line);border-radius:12px;padding:0}
+.wm .m svg{display:block;width:22px;height:22px}
 .wm b{color:var(--green);font-weight:500}
 .cta{color:var(--fg);text-decoration:none;font:600 13px Manrope;border:1px solid var(--line);padding:10px 16px;border-radius:99px;backdrop-filter:blur(8px);transition:.25s}
 .cta:hover{border-color:var(--purple);background:rgba(var(--glow),.14)}

@@ -42,8 +42,8 @@ function makeLobedLeaf(material, length, width, lobes = 5) {
 function makeBractRing(index, count, radius, y, parent, materials) {
   const ring = new THREE.Group();
   ring.position.y = y;
-  const height = 0.58 + (index % 4) * 0.055;
-  const geometry = new THREE.ConeGeometry(0.075 + (index % 3) * 0.008, height, 5, 1);
+  const height = 0.72 + (index % 4) * 0.07;
+  const geometry = new THREE.ConeGeometry(0.095 + (index % 3) * 0.012, height, 5, 1);
   geometry.translate(0, height * 0.46, 0);
   const mesh = new THREE.InstancedMesh(geometry, materials[index % materials.length], count);
   const matrix = new THREE.Matrix4();
@@ -52,15 +52,15 @@ function makeBractRing(index, count, radius, y, parent, materials) {
   const quaternion = new THREE.Quaternion();
   const scale = new THREE.Vector3();
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * TAU + index * 0.19;
-    const radial = radius + Math.sin(i * 4.1 + index) * 0.035;
-    position.set(Math.cos(angle) * radial, Math.sin(i * 2.7) * 0.025, Math.sin(angle) * radial);
-    direction.set(Math.cos(angle) * 0.38, 0.8 + (index / 10) * 0.18, Math.sin(angle) * 0.38).normalize();
+    const angle = (i / count) * TAU + index * 0.13;
+    const radial = radius + Math.sin(i * 4.1 + index) * 0.025;
+    position.set(Math.cos(angle) * radial, Math.sin(i * 2.7 + index) * 0.025, Math.sin(angle) * radial);
+    direction.set(Math.cos(angle) * 0.58, 0.62 + (index / 10) * 0.24, Math.sin(angle) * 0.58).normalize();
     quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
-    scale.set(0.82 + Math.sin(i * 3.4) * 0.1, 0.82 + (i % 5) * 0.08, 0.82 + Math.cos(i * 2.8) * 0.1);
+    scale.set(0.9 + Math.sin(i * 3.4) * 0.12, 0.88 + (i % 5) * 0.1, 0.9 + Math.cos(i * 2.8) * 0.12);
     matrix.compose(position, quaternion, scale);
     mesh.setMatrixAt(i, matrix);
-    mesh.setColorAt(i, new THREE.Color().setHSL(0.39 + (i % 7) * 0.003, 0.74, 0.28 + (i % 4) * 0.035));
+    mesh.setColorAt(i, new THREE.Color().setHSL(0.39 + (i % 7) * 0.003, 0.72, 0.27 + (i % 4) * 0.045));
   }
   mesh.instanceMatrix.needsUpdate = true;
   ring.add(mesh);
@@ -68,12 +68,13 @@ function makeBractRing(index, count, radius, y, parent, materials) {
   return ring;
 }
 
+// Fine, upright florets distributed over a domed crown rather than around a purple sphere.
 function makeFloretInstances(parent, count, radius, length, palette, seed = 0) {
-  const geometry = new THREE.ConeGeometry(0.012, length, 5, 1);
-  geometry.translate(0, length * 0.48, 0);
+  const geometry = new THREE.CylinderGeometry(0.0045, 0.018, 1, 5, 5);
+  geometry.translate(0, 0.5, 0);
   const material = new THREE.MeshStandardMaterial({
-    color: '#ffffff', roughness: 0.66, metalness: 0.02, vertexColors: true,
-    emissive: '#4d1680', emissiveIntensity: 0.12
+    color: '#ffffff', roughness: 0.58, metalness: 0.01, vertexColors: true,
+    emissive: '#9d4caa', emissiveIntensity: 0.24
   });
   const mesh = new THREE.InstancedMesh(geometry, material, count);
   const matrix = new THREE.Matrix4();
@@ -85,26 +86,25 @@ function makeFloretInstances(parent, count, radius, length, palette, seed = 0) {
   const colours = palette.map(value => new THREE.Color(value));
   for (let i = 0; i < count; i++) {
     const t = (i + 0.5) / count;
-    const y = 1 - 2 * t;
-    const ring = Math.sqrt(Math.max(0, 1 - y * y));
     const angle = i * 2.399963229728653 + seed;
-    const r = radius * (0.92 + 0.08 * Math.sin(i * 1.73));
-    position.set(Math.cos(angle) * ring * r, y * r * 0.72, Math.sin(angle) * ring * r);
-    direction.set(position.x * 0.72, 0.62 + (i % 6) * 0.035, position.z * 0.72).normalize();
+    const radial = radius * Math.sqrt(t) * (0.94 + 0.06 * Math.sin(i * 1.73));
+    const x = Math.cos(angle) * radial;
+    const z = Math.sin(angle) * radial;
+    position.set(x, 0.48 - radial * radial * 0.16, z);
+    direction.set(x * 0.28, 1, z * 0.28).normalize();
     quaternion.setFromUnitVectors(up, direction);
-    const scaleValue = 0.72 + (i % 9) * 0.055;
-    scale.set(scaleValue, scaleValue, scaleValue);
+    const strandLength = length * (0.72 + (i % 11) * 0.045) * (1 - 0.12 * t);
+    scale.set(0.8 + (i % 5) * 0.08, strandLength, 0.8 + (i % 7) * 0.045);
     matrix.compose(position, quaternion, scale);
     mesh.setMatrixAt(i, matrix);
     const colour = colours[(i * 7 + seed) % colours.length].clone();
-    colour.offsetHSL(Math.sin(i * 0.19) * 0.015, 0, Math.sin(i * 1.3) * 0.045);
+    colour.offsetHSL(Math.sin(i * 0.19) * 0.012, 0, Math.sin(i * 1.3) * 0.035);
     mesh.setColorAt(i, colour);
   }
   mesh.instanceMatrix.needsUpdate = true;
   parent.add(mesh);
   return mesh;
 }
-
 function createFlower() {
   const root = new THREE.Group();
   const stemMaterial = new THREE.MeshStandardMaterial({
@@ -153,27 +153,30 @@ function createFlower() {
   const head = new THREE.Group();
   head.position.set(0, 1.18, 0);
   root.add(head);
+  // Tapered green receptacle, visible only in the gaps between the bracts.
+  const coreProfile = [];
+  for (let i = 0; i <= 18; i++) {
+    const t = i / 18;
+    const angle = 0.12 + t * 2.55;
+    coreProfile.push(new THREE.Vector2(0.78 * Math.sin(angle), -0.68 * Math.cos(angle)));
+  }
   const bulb = new THREE.Mesh(
-    new THREE.SphereGeometry(0.88, 40, 32),
-    new THREE.MeshStandardMaterial({ color: '#4a1c94', roughness: 0.7, emissive: '#26094d', emissiveIntensity: 0.48 })
+    new THREE.LatheGeometry(coreProfile, 48),
+    new THREE.MeshStandardMaterial({ color: '#236b48', roughness: 0.66, emissive: '#082c1b', emissiveIntensity: 0.18 })
   );
-  bulb.scale.set(1, 0.9, 0.98);
   head.add(bulb);
 
   // Ten staggered rings contain 260 overlapping, spiky involucral bracts.
-  const ringCounts = [14, 18, 22, 24, 26, 28, 30, 32, 34, 32];
+  const ringCounts = [22, 24, 26, 28, 30, 32, 34, 34, 36, 34];
   const rings = [];
   ringCounts.forEach((count, index) => {
     rings.push(makeBractRing(index, count, 0.66 + index * 0.018, -0.5 + index * 0.085, head, bractMaterials));
   });
 
   // Blend-like flower head: 1,000 inner florets and 520 outer florets.
-  const inner = makeFloretInstances(head, 1000, 0.78, 0.42, ['#7c35d8', '#a64cff', '#d18cff', '#f2c3ff'], 3);
-  const outer = makeFloretInstances(head, 520, 0.94, 0.34, ['#6424bd', '#963be8', '#c16bff', '#f0aaff'], 11);
-  head.add(new THREE.Mesh(
-    new THREE.SphereGeometry(0.19, 24, 20),
-    new THREE.MeshStandardMaterial({ color: '#e3a7ff', emissive: '#a84cff', emissiveIntensity: 1.25, roughness: 0.42 })
-  ));
+  const inner = makeFloretInstances(head, 1000, 0.68, 1.12, ['#b45cff', '#d18cff', '#edbaff', '#fff0ff'], 3);
+  const outer = makeFloretInstances(head, 520, 0.96, 0.92, ['#963be8', '#c16bff', '#e5a0ff', '#fff0ff'], 11);
+
 
   const pollenCount = 130;
   const pollenPositions = new Float32Array(pollenCount * 3);
