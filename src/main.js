@@ -2,6 +2,7 @@ import { createNeonThistle } from './dioramas/neon-thistle.js';
 import { smoothScroll, gsap, ScrollTrigger } from './dioramas/core/scroll.js';
 import './style.css';
 import './mobile-hero.css';
+import './handover.css';
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.querySelector('#year').textContent = new Date().getFullYear();
@@ -32,30 +33,31 @@ if (!reducedMotion) {
 const thistle = createNeonThistle(document.querySelector('#thistle-canvas'), { reducedMotion });
 
 if (!reducedMotion) {
-  gsap.utils.toArray('.section-kicker, .service-row, .step, .work-card, .stats > div, .contact-form > *').forEach(element => {
-    gsap.fromTo(element, { y: 24, autoAlpha: 0 }, {
-      y: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out',
-      scrollTrigger: { trigger: element, start: 'top 88%', once: true }
-    });
-  });
-
-  ScrollTrigger.create({
-    trigger: '.steps', start: 'top 70%', end: 'bottom 65%', scrub: true,
-    onUpdate: self => {
-      document.querySelector('.steps-progress').style.transform = `scaleY(${self.progress})`;
-      document.querySelectorAll('.step').forEach((step, index) => {
-        step.classList.toggle('is-active', self.progress >= index / 3 + 0.04);
+  try {
+    gsap.utils.toArray('.section-kicker, .service-row, .step, .work-card, .stats > div, .contact-form > *').forEach(element => {
+      gsap.fromTo(element, { y: 24, autoAlpha: 0 }, {
+        y: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: element, start: 'top 88%', once: true }
       });
-    }
-  });
-
-  gsap.from('.hero-copy > *', {
-    y: 22, opacity: 0, duration: 0.85, stagger: 0.1,
-    ease: 'power3.out', delay: 0.12
-  });
+    });
+    ScrollTrigger.create({
+      trigger: '.steps', start: 'top 70%', end: 'bottom 65%', scrub: true,
+      onUpdate: self => {
+        document.querySelector('.steps-progress').style.transform = `scaleY(${self.progress})`;
+        document.querySelectorAll('.step').forEach((step, index) => {
+          step.classList.toggle('is-active', self.progress >= index / 3 + 0.04);
+        });
+      }
+    });
+    gsap.from('.hero-copy > *', {
+      y: 22, opacity: 0, duration: 0.85, stagger: 0.1,
+      ease: 'power3.out', delay: 0.12
+    });
+  } catch (error) {
+    console.warn('Scroll animation enhancement unavailable.', error);
+  }
 }
 
-// A native mailto fallback is intentional: no form provider or third-party endpoint is used.
 document.querySelector('#contact-form').addEventListener('submit', event => {
   event.preventDefault();
   const form = event.currentTarget;
