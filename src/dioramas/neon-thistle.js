@@ -4,77 +4,89 @@ import { Pointer } from './core/input.js';
 const TAU = Math.PI * 2;
 
 function makeLobedLeaf(material, length, width, lobes = 5) {
+  // Broad thistle leaf: a long central blade with pronounced triangular marginal lobes.
   const shape = new THREE.Shape();
-  const upper = [];
-  for (let i = 0; i <= lobes * 2; i++) {
-    const t = i / (lobes * 2);
-    const lobe = Math.sin(t * Math.PI * lobes) * 0.17 + 0.58;
-    upper.push(new THREE.Vector2(length * t, width * lobe));
-  }
-  const lower = [];
-  for (let i = lobes * 2; i >= 0; i--) {
-    const t = i / (lobes * 2);
-    const lobe = Math.sin(t * Math.PI * lobes) * 0.14 + 0.48;
-    lower.push(new THREE.Vector2(length * t, -width * lobe));
+  const edge = [];
+  const steps = lobes * 2;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const envelope = Math.pow(Math.sin(Math.PI * t), 0.72);
+    const serration = i === 0 || i === steps ? 0 : (i % 2 === 0 ? 0.23 : 0.09);
+    edge.push(new THREE.Vector2(length * t, width * envelope * (0.72 + serration)));
   }
   shape.moveTo(0, 0);
-  upper.forEach(point => shape.lineTo(point.x, point.y));
-  lower.forEach(point => shape.lineTo(point.x, point.y));
+  edge.forEach(p => shape.lineTo(p.x, p.y));
+  shape.lineTo(length, 0);
+  for (let i = steps; i >= 0; i--) {
+    const t = i / steps;
+    const envelope = Math.pow(Math.sin(Math.PI * t), 0.72);
+    const serration = i === 0 || i === steps ? 0 : (i % 2 === 0 ? 0.23 : 0.09);
+    shape.lineTo(length * t, -width * envelope * (0.72 + serration));
+  }
   shape.closePath();
   const geometry = new THREE.ExtrudeGeometry(shape, {
-    depth: 0.025, bevelEnabled: true, bevelSegments: 2, steps: 1,
-    bevelSize: 0.012, bevelThickness: 0.012
+    depth: 0.035, bevelEnabled: true, bevelSegments: 3, steps: 1,
+    bevelSize: 0.018, bevelThickness: 0.018
   });
   geometry.computeVertexNormals();
   const leaf = new THREE.Mesh(geometry, material);
   leaf.castShadow = true;
   leaf.receiveShadow = true;
   const ribCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0, 0.035),
-    new THREE.Vector3(length * 0.28, 0, 0.04),
-    new THREE.Vector3(length * 0.62, 0, 0.035),
-    new THREE.Vector3(length, 0, 0.01)
+    new THREE.Vector3(0, 0, 0.045),
+    new THREE.Vector3(length * 0.28, 0, 0.05),
+    new THREE.Vector3(length * 0.62, 0, 0.045),
+    new THREE.Vector3(length, 0, 0.02)
   ]);
-  leaf.add(new THREE.Mesh(new THREE.TubeGeometry(ribCurve, 24, 0.009, 5, false), material));
+  leaf.add(new THREE.Mesh(new THREE.TubeGeometry(ribCurve, 32, 0.012, 5, false), material));
   return leaf;
 }
-
 function makeBractRing(index, count, radius, y, parent, materials) {
   const ring = new THREE.Group();
   ring.position.y = y;
-  const height = 0.72 + (index % 4) * 0.07;
-  const geometry = new THREE.ConeGeometry(0.095 + (index % 3) * 0.012, height, 5, 1);
-  geometry.translate(0, height * 0.46, 0);
+  const width = 0.18 + (index % 3) * 0.018;
+  const height = 0.76 + (index % 4) * 0.055;
+  const shape = new THREE.Shape();
+  shape.moveTo(-width * 0.5, 0);
+  shape.quadraticCurveTo(-width * 0.62, height * 0.3, 0, height);
+  shape.quadraticCurveTo(width * 0.62, height * 0.3, width * 0.5, 0);
+  shape.quadraticCurveTo(0, -0.045, -width * 0.5, 0);
+  const geometry = new THREE.ExtrudeGeometry(shape, {
+    depth: 0.025, bevelEnabled: true, bevelSegments: 2,
+    bevelSize: 0.012, bevelThickness: 0.012, steps: 1
+  });
+  geometry.translate(0, height * 0.42, 0);
   const mesh = new THREE.InstancedMesh(geometry, materials[index % materials.length], count);
   const matrix = new THREE.Matrix4();
   const position = new THREE.Vector3();
   const direction = new THREE.Vector3();
   const quaternion = new THREE.Quaternion();
   const scale = new THREE.Vector3();
+  const axis = new THREE.Vector3(0, 1, 0);
   for (let i = 0; i < count; i++) {
     const angle = (i / count) * TAU + index * 0.13;
-    const radial = radius + Math.sin(i * 4.1 + index) * 0.025;
-    position.set(Math.cos(angle) * radial, Math.sin(i * 2.7 + index) * 0.025, Math.sin(angle) * radial);
-    direction.set(Math.cos(angle) * 0.58, 0.62 + (index / 10) * 0.24, Math.sin(angle) * 0.58).normalize();
-    quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
-    scale.set(0.9 + Math.sin(i * 3.4) * 0.12, 0.88 + (i % 5) * 0.1, 0.9 + Math.cos(i * 2.8) * 0.12);
+    const radial = radius + Math.sin(i * 4.1 + index) * 0.035;
+    position.set(Math.cos(angle) * radial, Math.sin(i * 2.7 + index) * 0.035, Math.sin(angle) * radial);
+    direction.set(Math.cos(angle) * (0.78 + index * 0.012), 0.42 + (index / 10) * 0.18, Math.sin(angle) * (0.78 + index * 0.012)).normalize();
+    quaternion.setFromUnitVectors(axis, direction);
+    scale.set(0.92 + Math.sin(i * 3.4) * 0.12, 0.94 + (i % 5) * 0.08, 1);
     matrix.compose(position, quaternion, scale);
     mesh.setMatrixAt(i, matrix);
-    mesh.setColorAt(i, new THREE.Color().setHSL(0.39 + (i % 7) * 0.003, 0.72, 0.27 + (i % 4) * 0.045));
+    const green = [0.32,0.36,0.4,0.34,0.38,0.42][(i + index) % 6];
+    mesh.setColorAt(i, new THREE.Color().setHSL(0.385 + (i % 5) * 0.004, 0.64, green));
   }
   mesh.instanceMatrix.needsUpdate = true;
   ring.add(mesh);
   parent.add(ring);
   return ring;
 }
-
 // Fine, upright florets distributed over a domed crown rather than around a purple sphere.
 function makeFloretInstances(parent, count, radius, length, palette, seed = 0) {
-  const geometry = new THREE.CylinderGeometry(0.0045, 0.018, 1, 5, 5);
+  const geometry = new THREE.CylinderGeometry(0.0018, 0.0065, 1, 4, 4);
   geometry.translate(0, 0.5, 0);
   const material = new THREE.MeshStandardMaterial({
     color: '#ffffff', roughness: 0.58, metalness: 0.01, vertexColors: true,
-    emissive: '#9d4caa', emissiveIntensity: 0.24
+    emissive: '#d58be8', emissiveIntensity: 0.38
   });
   const mesh = new THREE.InstancedMesh(geometry, material, count);
   const matrix = new THREE.Matrix4();
@@ -132,13 +144,13 @@ function createFlower() {
   root.add(new THREE.Mesh(new THREE.TubeGeometry(stemCurve, 72, 0.045, 9, false), stemMaterial));
 
   const leafLevels = [
-    { y: -3.25, angle: 0.1, length: 1.5, width: 0.34 },
-    { y: -2.8, angle: 2.55, length: 1.42, width: 0.32 },
-    { y: -2.25, angle: 4.65, length: 1.28, width: 0.29 },
-    { y: -1.75, angle: 1.2, length: 1.18, width: 0.27 },
-    { y: -1.24, angle: 3.25, length: 1.03, width: 0.24 },
-    { y: -0.76, angle: 5.3, length: 0.86, width: 0.21 },
-    { y: -0.28, angle: 2.0, length: 0.7, width: 0.18 }
+    { y: -3.25, angle: 0.1, length: 1.85, width: 0.48 },
+    { y: -2.8, angle: 2.55, length: 1.72, width: 0.46 },
+    { y: -2.25, angle: 4.65, length: 1.55, width: 0.42 },
+    { y: -1.75, angle: 1.2, length: 1.42, width: 0.39 },
+    { y: -1.24, angle: 3.25, length: 1.28, width: 0.35 },
+    { y: -0.76, angle: 5.3, length: 1.08, width: 0.31 },
+    { y: -0.28, angle: 2.0, length: 0.9, width: 0.27 }
   ];
   leafLevels.forEach((item, index) => {
     const anchor = new THREE.Group();
@@ -174,8 +186,8 @@ function createFlower() {
   });
 
   // Blend-like flower head: 1,000 inner florets and 520 outer florets.
-  const inner = makeFloretInstances(head, 1000, 0.68, 1.12, ['#b45cff', '#d18cff', '#edbaff', '#fff0ff'], 3);
-  const outer = makeFloretInstances(head, 520, 0.96, 0.92, ['#963be8', '#c16bff', '#e5a0ff', '#fff0ff'], 11);
+  const inner = makeFloretInstances(head, 1000, 0.68, 1.12, ['#d9a4e9', '#edc9f5', '#f7e4fb', '#fff5ff'], 3);
+  const outer = makeFloretInstances(head, 520, 0.96, 0.92, ['#bd83d6', '#dca8eb', '#f1d6f7', '#fff5ff'], 11);
 
 
   const pollenCount = 130;
