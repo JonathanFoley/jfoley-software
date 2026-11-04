@@ -19,6 +19,8 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run build
+      - name: Verify custom-domain artifact
+        run: test "$(cat dist/CNAME)" = "jonathanfoley.co.uk"
       - name: Upload GitHub Pages artifact
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v4
