@@ -190,7 +190,7 @@ function createFlower() {
   const outer = makeFloretInstances(head, 520, 0.96, 0.92, ['#bd83d6', '#dca8eb', '#f1d6f7', '#fff5ff'], 11);
 
 
-  const pollenCount = 130;
+  const pollenCount = 64;
   const pollenPositions = new Float32Array(pollenCount * 3);
   const pollenSeeds = [];
   for (let i = 0; i < pollenCount; i++) {
@@ -232,7 +232,7 @@ export function createNeonThistle(canvas, { reducedMotion = false } = {}) {
 
   try {
     engine = new Engine({
-      canvas, fov: 32, near: 0.1, far: 60, dpr: 2,
+      canvas, fov: 32, near: 0.1, far: 60, dpr: Math.min(window.devicePixelRatio || 1, 1.5),
       background: null, shadows: false, alpha: true, post: false
     });
     engine.scene.background = null;
@@ -297,11 +297,11 @@ export function createNeonThistle(canvas, { reducedMotion = false } = {}) {
       scrollTarget = damp(scrollTarget, 0, 2.2, dt);
       flower.root.rotation.y = damp(
         flower.root.rotation.y,
-        pointer.sx * 0.11 + scrollVelocity * 0.045 + Math.sin(time * 0.24) * 0.025,
+        pointer.sx * 0.11 + scrollVelocity * 0.045 + Math.sin(time * 0.18) * 0.018,
         2.1, dt
       );
-      flower.root.rotation.z = damp(flower.root.rotation.z, -pointer.sy * 0.045 + Math.sin(time * 0.38) * 0.012, 2, dt);
-      flower.root.position.y = (window.innerWidth <= 820 ? 1 : -0.15) + Math.sin(time * 0.55) * 0.045;
+      flower.root.rotation.z = damp(flower.root.rotation.z, -pointer.sy * 0.045 + Math.sin(time * 0.28) * 0.008, 2, dt);
+      flower.root.position.y = (window.innerWidth <= 820 ? 1 : -0.15) + Math.sin(time * 0.38) * 0.028;
       flower.head.rotation.y = Math.sin(time * 0.3) * 0.055 + pointer.sx * 0.055;
       flower.head.rotation.x = damp(flower.head.rotation.x, pointer.sy * 0.045, 2.2, dt);
       key.position.x = 3 + pointer.sx * 0.4;

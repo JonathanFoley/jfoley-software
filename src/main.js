@@ -1,9 +1,15 @@
 import { createNeonThistle } from './dioramas/neon-thistle.js';
+import { gsap } from 'gsap';
 import './style.css';
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const year = document.querySelector('#year');
 if (year) year.textContent = new Date().getFullYear();
+
+// Restrained hero entrance choreography; the content remains visible without animation.
+if (!reducedMotion) {
+  gsap.fromTo('.copy > *', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.85, stagger: 0.09, ease: 'power2.out', delay: 0.18 });
+}
 
 // Progressive reveal: content remains visible if IntersectionObserver is unavailable.
 if ('IntersectionObserver' in window && !reducedMotion) {
@@ -23,7 +29,7 @@ if ('IntersectionObserver' in window && !reducedMotion) {
 
 // Keep the handover's sticky hero composition alive for a full viewport of scroll.
 const track = document.querySelector('#track');
-if (track) track.style.minHeight = '190svh';
+if (track) track.style.minHeight = '100svh';
 const hero = document.querySelector('.hero');
 const copy = document.querySelector('.copy');
 const updateHeroProgress = () => {
