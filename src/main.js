@@ -1,3 +1,4 @@
+import { createNeonThistle } from './dioramas/neon-thistle.js';
 import { gsap } from 'gsap';
 import './style.css';
 
@@ -55,6 +56,9 @@ addEventListener('scroll', updateSteps, { passive: true });
 addEventListener('resize', updateSteps);
 updateSteps();
 
+// Pointer and scroll-reactive 3D thistle; graceful CSS fallback on unsupported devices.
+const thistle = createNeonThistle(document.querySelector('#thistle-canvas'), { reducedMotion });
+
 const form = document.querySelector('#contact-form');
 form?.addEventListener('submit', event => {
   event.preventDefault();
@@ -74,3 +78,4 @@ form?.addEventListener('submit', event => {
   window.location.href = `mailto:contact@jonathanfoley.co.uk?subject=${subject}&body=${message}`;
 });
 
+addEventListener('pagehide', () => thistle?.destroy(), { once: true });
